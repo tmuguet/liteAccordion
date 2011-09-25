@@ -28,9 +28,13 @@
 			pauseOnHover : false, 
 			cycleSpeed : 6000,
 
-			theme : 'basic', // basic, light*, dark, stitch*
 			rounded : false,
-			enumerateSlides : false
+			enumerateSlides : false,
+			icons: {
+    			header: "ui-icon-triangle-1-e",
+    			headerSelected: "ui-icon-triangle-1-s"
+    		},
+		
 		},
 		
 		// merge defaults with options in new settings object				
@@ -79,8 +83,10 @@
 		$accordion
 			.height(settings.containerHeight)
 			.width(settings.containerWidth)
-			.addClass(settings.theme)
-			.addClass(settings.rounded && 'rounded');
+			.addClass("ui-widget ui-helper-reset");
+
+        $accordion.find("li > h2").addClass("ui-widget-header");
+        $accordion.find("li > div").addClass("ui-widget-content");
 		
 		// set tab width, height and selected class
 		$header
@@ -110,10 +116,25 @@
 					.width(slideWidth)
 					.css({ left : left, paddingLeft : settings.headerWidth });
 			
+			if ( settings.icons ) {
+    			$( "<span></span>" )
+    				.addClass( "ui-icon " + settings.icons.header )
+    				.css("float", "left")
+    				.prependTo( this );
+    		}
+			
 			// add number to bottom of tab
 			settings.enumerateSlides && $this.append('<b>' + (index + 1) + '</b>');			
 
-		});	
+		});
+		
+		if ( settings.icons ) {
+    		$header
+    			.eq(settings.firstSlide - 1)
+    			.children(".ui-icon")
+    			.addClass( settings.icons.headerSelected )
+                .removeClass( settings.icons.header );
+        }
 				
 		// bind event handler for activating slides
 		$header.click(function(e) {
@@ -127,6 +148,16 @@
 				}, 
 				$group = utils.getGroup.call(this, pos, index);
 								
+			if ( settings.icons ) {
+    			$accordion.find( ".ui-icon" )
+    					.removeClass( settings.icons.headerSelected )
+    					.addClass( settings.icons.header );
+    									
+    			$this.children( ".ui-icon" )
+    					.addClass( settings.icons.headerSelected )
+    					.removeClass( settings.icons.header );
+            }
+					
 			// set animation direction
 			if (this.offsetLeft === pos.left) {
 				pos.newPos = slideWidth;
